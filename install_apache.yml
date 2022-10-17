@@ -4,16 +4,31 @@
   become: true
   tasks:
 
-  - name: installing apache2 package
+  - name: install updates (ubuntu)
     apt:
-      name: apache2
-      
-  - name: update repository index
-    apt:
-      update_cache: yes
-      state: latest
+      upgrade: dist
+      upgrade_cache: yes
+    when: ansible_distribution == "ubuntu"
 
-  - name: add php suport for apache
+
+  - name: install apache and php for ubuntu servers
+    tags: apache, apache2, ubuntu
     apt:
-       name: lib_apache2md php
-       state: latest
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks: 
+
+  - name: install apache and php for ubuntu servers
+    apt:
+      name:
+        - apache2               
+        - libapache2-mod-php 
+      state: latest
+    when: ansible_distribution == "ubuntu"
