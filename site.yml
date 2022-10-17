@@ -1,0 +1,43 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install updates (ubuntu)
+    apt:
+      upgrade: dist
+      upgrade_cache: yes
+    when: ansible_distribution == "ubuntu"
+
+
+  - name: install apache and php for ubuntu servers
+    tags: apache, apache2, ubuntu
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks: 
+
+  - name: install apache and php for ubuntu servers
+    apt:
+      name:
+        - apache2               
+        - libapache2-mod-php 
+      state: latest
+    when: ansible_distribution == "ubuntu"
+ 
+  - name: copy default html file for site
+    tags: apache, apache2, php
+    copy:
+      src: file/default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
